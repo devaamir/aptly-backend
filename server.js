@@ -7,9 +7,27 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:3000", // For local development
+  "https://aptly-admin.netlify.app", // For production
+];
+
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: "https://aptly-admin.netlify.app" })); // Replace with your Netlify URL
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 
 // MongoDB Connection
 mongoose
