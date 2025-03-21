@@ -1,9 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const adminRoutes = require("./routes/adminRoutes");
+const Admin = require("./models/Admin");
 
 const app = express();
 
@@ -32,12 +34,12 @@ app.use(
 // Seed Admin User
 const seedAdmin = async () => {
   try {
-    const adminExists = await Admin.findOne({ email: "admin@example.com" });
+    const adminExists = await Admin.findOne({ email: "admin@aptly.com" });
     if (!adminExists) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash("admin123", salt);
       const admin = new Admin({
-        email: "admin@example.com",
+        email: "admin@aptly.com",
         password: hashedPassword,
       });
       await admin.save();
