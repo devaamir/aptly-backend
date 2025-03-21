@@ -14,8 +14,8 @@ router.post("/login", async (req, res) => {
     const admin = await Admin.findOne({ email });
     if (!admin) return res.status(400).json({ msg: "Invalid credentials" });
 
-    // const isMatch = await bcrypt.compare(password, admin.password);
-    const isMatch = password === admin.password;
+    const isMatch = await bcrypt.compare(password, admin.password);
+    // const isMatch = password === admin.password;
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
     const payload = { admin: { id: admin.id } };
