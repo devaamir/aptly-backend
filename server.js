@@ -29,11 +29,35 @@ app.use(
   })
 );
 
+// Seed Admin User
+const seedAdmin = async () => {
+  try {
+    const adminExists = await Admin.findOne({ email: "admin@example.com" });
+    if (!adminExists) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash("admin123", salt);
+      const admin = new Admin({
+        email: "admin@example.com",
+        password: hashedPassword,
+      });
+      await admin.save();
+      console.log("Admin user created");
+    } else {
+      console.log("Admin user already exists");
+    }
+  } catch (err) {
+    console.error("Error seeding admin:", err.message);
+  }
+};
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .then(() => {
+    console.log("MongoDB connected");
+    seedAdmin(); // Call the seeding function after connection
+  })
+  .catch((err) => console.log("MongoDB connection error:", err.message));
 
 // Routes
 app.use("/api/admin", adminRoutes);
